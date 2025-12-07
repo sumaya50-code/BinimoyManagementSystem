@@ -67,7 +67,7 @@
                     <li>
                         <a href="{{ route('roles.index') }}">Role List</a>
                     </li>
-                    
+
                 </ul>
             </li>
         </ul>

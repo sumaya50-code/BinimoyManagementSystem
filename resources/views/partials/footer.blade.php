@@ -5,12 +5,12 @@
                         <div class="text-center ltr:md:text-start rtl:md:text-right text-sm">
                             COPYRIGHT ©
                             <span id="thisYear"></span>
-                            DashCode, All rights Reserved
+                            Tri, All rights Reserved
                         </div>
                         <div class="ltr:md:text-right rtl:md:text-end text-center text-sm">
                             Hand-crafted &amp; Made by
-                            <a href="https://codeshaper.net" target="_blank" class="text-primary-500 font-semibold">
-                                Codeshaper
+                            <a href="javascript:void(0)" target="_blank" class="text-primary-500 font-semibold">
+                                Tri
                             </a>
                         </div>
                     </div>
