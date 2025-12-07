@@ -12,34 +12,24 @@ class RoleController extends Controller
 {
     public function __construct()
     {
-        // Assign permissions to specific methods
         $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index','store']]);
         $this->middleware('permission:role-create', ['only' => ['create','store']]);
         $this->middleware('permission:role-edit', ['only' => ['edit','update']]);
         $this->middleware('permission:role-delete', ['only' => ['destroy']]);
     }
 
-    /**
-     * Display a listing of roles.
-     */
     public function index(): View
     {
         $roles = Role::latest()->get();
-        return view('roles.index', compact('roles'));
+        return view('admin.roles.index', compact('roles'));
     }
 
-    /**
-     * Show the form for creating a new role.
-     */
     public function create(): View
     {
         $permissions = Permission::all();
-        return view('roles.create', compact('permissions'));
+        return view('admin.roles.create', compact('permissions'));
     }
 
-    /**
-     * Store a newly created role in storage.
-     */
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -48,38 +38,21 @@ class RoleController extends Controller
         ]);
 
         $role = Role::create(['name' => $validated['name']]);
-        $role->syncPermissions($validated['permission']);
+        $role->syncPermissions($validated['permission']); // names sent from form
 
         return redirect()->route('roles.index')
                          ->with('success', 'Role created successfully.');
     }
 
-    /**
-     * Display the specified role.
-     */
-    public function show(int $id): View
-    {
-        $role = Role::findOrFail($id);
-        $rolePermissions = $role->permissions;
-
-        return view('roles.show', compact('role', 'rolePermissions'));
-    }
-
-    /**
-     * Show the form for editing the specified role.
-     */
     public function edit(int $id): View
     {
         $role = Role::findOrFail($id);
         $permissions = Permission::all();
         $rolePermissions = $role->permissions->pluck('id')->toArray();
 
-        return view('roles.edit', compact('role', 'permissions', 'rolePermissions'));
+        return view('admin.roles.edit', compact('role', 'permissions', 'rolePermissions'));
     }
 
-    /**
-     * Update the specified role in storage.
-     */
     public function update(Request $request, int $id): RedirectResponse
     {
         $role = Role::findOrFail($id);
@@ -90,15 +63,12 @@ class RoleController extends Controller
         ]);
 
         $role->update(['name' => $validated['name']]);
-        $role->syncPermissions($validated['permission']);
+        $role->syncPermissions($validated['permission']); // names sent from form
 
         return redirect()->route('roles.index')
                          ->with('success', 'Role updated successfully.');
     }
 
-    /**
-     * Remove the specified role from storage.
-     */
     public function destroy(int $id): RedirectResponse
     {
         $role = Role::findOrFail($id);
