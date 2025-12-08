@@ -1132,7 +1132,7 @@
 
                          <!-- BEGIN: Message Dropdown -->
                          <!-- Mail Dropdown -->
-                         <div class="relative md:block hidden">
+                         <!--<div class="relative md:block hidden">
                              <button
                                  class="lg:h-[32px] lg:w-[32px] lg:bg-slate-100 lg:dark:bg-slate-900 dark:text-white text-slate-900 cursor-pointer
       rounded-full text-[20px] flex flex-col items-center justify-center"
@@ -1143,9 +1143,9 @@
                                      class="absolute -right-1 lg:top-0 -top-[6px] h-4 w-4 bg-red-500 text-[8px] font-semibold flex flex-col items-center
         justify-center rounded-full text-white z-[45]">
                                      10</span>
-                             </button>
+                             </button>-->
                              <!-- Mail Dropdown -->
-                             <div
+                             <!--<div
                                  class="dropdown-menu z-10 hidden bg-white divide-y divide-slate-100 dark:divide-slate-700 shadow w-[335px]
       dark:bg-slate-800 border dark:border-slate-700 !top-[23px] rounded-md overflow-hidden lrt:origin-top-right rtl:origin-top-left">
                                  <div class="flex items-center justify-between py-4 px-4">
@@ -1250,12 +1250,12 @@
                                      </div>
                                  </div>
                              </div>
-                         </div>
+                         </div>-->
                          <!-- END: Message Dropdown -->
 
                          <!-- BEGIN: Notification Dropdown -->
                          <!-- Notifications Dropdown area -->
-                         <div class="relative md:block hidden">
+                         <!--<div class="relative md:block hidden">
                              <button
                                  class="lg:h-[32px] lg:w-[32px] lg:bg-slate-100 lg:dark:bg-slate-900 dark:text-white text-slate-900 cursor-pointer
       rounded-full text-[20px] flex flex-col items-center justify-center"
@@ -1267,7 +1267,7 @@
         justify-center rounded-full text-white z-[99]">
                                      4</span>
                              </button>
-                             <!-- Notifications Dropdown -->
+                           Notifications Dropdown
                              <div
                                  class="dropdown-menu z-10 hidden bg-white shadow w-[335px]
       dark:bg-slate-800 border dark:border-slate-700 !top-[23px] rounded-md overflow-hidden lrt:origin-top-right rtl:origin-top-left">
@@ -1372,7 +1372,7 @@
                                      </div>
                                  </div>
                              </div>
-                         </div>
+                         </div>-->
                          <!-- END: Notification Dropdown -->
 
                          <!-- BEGIN: Profile Dropdown -->

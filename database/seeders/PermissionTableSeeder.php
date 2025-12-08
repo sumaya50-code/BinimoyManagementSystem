@@ -7,25 +7,19 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $permissions = [
-           'role-list',
-           'role-create',
-           'role-edit',
-           'role-delete',
-           'product-list',
-           'product-create',
-           'product-edit',
-           'product-delete'
+            'Role' => ['role-list', 'role-create', 'role-edit', 'role-delete'],
+            'Product' => ['product-list', 'product-create', 'product-edit', 'product-delete'],
+            'User' => ['user-list', 'user-create', 'user-edit', 'user-delete'],
+            'Member' => ['member-list', 'member-create', 'member-edit', 'member-delete'],
         ];
 
-        foreach ($permissions as $permission) {
-            // Use firstOrCreate to avoid duplicates
-            Permission::firstOrCreate(['name' => $permission]);
+        foreach ($permissions as $group => $perms) {
+            foreach ($perms as $permission) {
+                Permission::firstOrCreate(['name' => $permission]);
+            }
         }
     }
 }

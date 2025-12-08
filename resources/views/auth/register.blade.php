@@ -26,16 +26,21 @@
         <div class="lg-inner-column">
             <div class="left-column relative z-[1]">
                 <div class="max-w-[520px] pt-20 ltr:pl-20 rtl:pr-20">
-                    <a href="{{ url('/') }}">
+                    <!--<a href="{{ url('/') }}">
                         <img src="{{ asset('assets/images/logo/logo.svg') }}" alt="" class="mb-10 dark_logo">
                         <img src="{{ asset('assets/images/logo/logo-white.svg') }}" alt="" class="mb-10 white_logo">
-                    </a>
-                    <h4>
-                        Unlock your Project
-                        <span class="text-slate-800 dark:text-slate-400 font-bold">
-                            performance
-                        </span>
-                    </h4>
+                    </a>-->
+                    <div class="space-y-2">
+                        <h4 class="text-3xl font-bold text-slate-900 dark:text-white leading-tight">
+                            Welcome to Binimoy
+                        </h4>
+                        <p class="text-slate-600 dark:text-slate-300 text-base font-normal">
+                            Create your account and start managing
+                            <span class="text-primary font-semibold">
+                                Binimoy effectively
+                            </span>
+                        </p>
+                    </div>
                 </div>
                 <div class="absolute left-0 2xl:bottom-[-160px] bottom-[-130px] h-full w-full z-[-1]">
                     <img src="{{ asset('assets/images/auth/ils1.svg') }}" alt="" class=" h-full w-full object-contain">
@@ -51,9 +56,9 @@
                             </a>
                         </div>
                         <div class="text-center 2xl:mb-10 mb-4">
-                            <h4 class="font-medium">Register</h4>
+                            <h4 class="font-medium">Sign Up</h4>
                             <div class="text-slate-500 text-base">
-                                Create your account to start using Dashcode
+                              Join Binimoy Management System and get started today
                             </div>
                         </div>
 
@@ -109,9 +114,9 @@
                             </a>
                         </div>
                     </div>
-                    <div class="auth-footer text-center mt-6">
+                    <!--<div class="auth-footer text-center mt-6">
                         Copyright 2021, Dashcode All Rights Reserved.
-                    </div>
+                    </div>-->
                 </div>
             </div>
         </div>
