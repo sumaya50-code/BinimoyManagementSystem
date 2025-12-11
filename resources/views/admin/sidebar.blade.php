@@ -106,8 +106,176 @@
                     </ul>
                 </li>
             @endcanany
+            <!-- Savings -->
+             @canany(['saving-list', 'saving-create', 'saving-edit', 'saving-delete'])
+                <li>
+                    <a href="#" class="navItem">
+                        <span class="flex items-center">
+                            <iconify-icon class="nav-icon" icon="heroicons:banknotes"></iconify-icon>
+
+                            <span>Savings</span>
+                        </span>
+                        <iconify-icon class="icon-arrow" icon="heroicons-outline:chevron-right"></iconify-icon>
+                    </a>
+                    <ul class="sidebar-submenu">
+                        @can('saving-list')
+                            <li>
+                                <a href="{{ route('savings.index') }}">Savings List</a>
+                            </li>
+                        @endcan
+                    </ul>
+                </li>
+            @endcanany
+             @canany(['loan-list', 'loan-create', 'loan-edit', 'loan-delete'])
+                <li>
+                    <a href="#" class="navItem">
+                        <span class="flex items-center">
+                            <iconify-icon class="nav-icon" icon="heroicons:currency-dollar"></iconify-icon>
+
+
+                            <span>Loans</span>
+                        </span>
+                        <iconify-icon class="icon-arrow" icon="heroicons-outline:chevron-right"></iconify-icon>
+                    </a>
+                    <ul class="sidebar-submenu">
+                        @can('loan-list')
+                            <li>
+                                <a href="{{ route('loans.index') }}">Loan List</a>
+                            </li>
+                        @endcan
+                    </ul>
+                </li>
+            @endcanany
 
         </ul>
         <!-- Upgrade Your Business Plan Card Start -->
     </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -6,11 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Saving extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'member_id',
+        'balance',
+        'interest_rate',
+        'type',
+        'amount',
+        'status',
+    ];
 
-    protected $fillable = ['member_id', 'amount', 'saving_date'];
-
-    public function member() {
-        return $this->belongsTo(Member::class);
+    public function member()
+    {
+        return $this->belongsTo(User::class, 'member_id');
     }
 }

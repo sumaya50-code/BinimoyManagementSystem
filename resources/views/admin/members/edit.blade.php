@@ -74,7 +74,7 @@
             </div>
 
             <!-- Submit Button -->
-            <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div class=" justify-end flex mt-4">
                 <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition shadow-md text-sm sm:text-base">
                     <iconify-icon icon="heroicons-outline:check" class="mr-2"></iconify-icon>
                     Update Member

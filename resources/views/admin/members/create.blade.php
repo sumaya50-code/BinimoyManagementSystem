@@ -11,6 +11,7 @@
             <iconify-icon icon="heroicons-outline:chevron-right" class="text-slate-400"></iconify-icon>
             <span class="text-slate-600 dark:text-slate-300">Create Member</span>
         </nav>
+
         <!-- Back Button -->
         <a href="{{ route('members.index') }}" class="btn btn-secondary px-4 py-2 rounded-lg font-medium flex items-center">
             <iconify-icon icon="heroicons-outline:arrow-left" class="mr-2"></iconify-icon>
@@ -30,7 +31,13 @@
                         <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                             Name <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="name" class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white" placeholder="Member Name" required>
+                        <input type="text" name="name" value="{{ old('name') }}"
+                            class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg
+                                   focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
+                            placeholder="Member Name" required>
+                        @error('name')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Address -->
@@ -38,7 +45,13 @@
                         <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                             Address <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="address" class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white" placeholder="Enter address" required>
+                        <input type="text" name="address" value="{{ old('address') }}"
+                            class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg
+                                   focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
+                            placeholder="Enter address" required>
+                        @error('address')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- NID -->
@@ -46,7 +59,13 @@
                         <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                             NID <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="nid" class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white" placeholder="National ID" required>
+                        <input type="number" name="nid" value="{{ old('nid') }}"
+                            class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg
+                                   focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
+                            placeholder="National ID" required>
+                        @error('nid')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Phone -->
@@ -54,7 +73,13 @@
                         <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                             Phone <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="phone" class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white" placeholder="Phone number" required>
+                        <input type="number" name="phone" value="{{ old('phone') }}"
+                            class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg
+                                   focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
+                            placeholder="Phone number" required>
+                        @error('phone')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Nominee Name -->
@@ -62,7 +87,10 @@
                         <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                             Nominee Name
                         </label>
-                        <input type="text" name="nominee_name" class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white" placeholder="Nominee name">
+                        <input type="text" name="nominee_name" value="{{ old('nominee_name') }}"
+                            class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg
+                                   focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
+                            placeholder="Nominee name">
                     </div>
 
                     <!-- Nominee Relation -->
@@ -70,7 +98,10 @@
                         <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                             Nominee Relation
                         </label>
-                        <input type="text" name="nominee_relation" class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white" placeholder="Relation">
+                        <input type="text" name="nominee_relation" value="{{ old('nominee_relation') }}"
+                            class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg
+                                   focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
+                            placeholder="Relation">
                     </div>
 
                     <!-- Buttons -->
@@ -84,6 +115,7 @@
                             Cancel
                         </a>
                     </div>
+
                 </form>
             </div>
         </div>

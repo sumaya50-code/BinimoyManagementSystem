@@ -8,6 +8,7 @@ use Spatie\Permission\Models\Permission;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 
+
 class RoleController extends Controller
 {
     public function __construct()
@@ -81,4 +82,5 @@ class RoleController extends Controller
         return redirect()->route('roles.index')
             ->with('success', 'Role deleted successfully.');
     }
+
 }

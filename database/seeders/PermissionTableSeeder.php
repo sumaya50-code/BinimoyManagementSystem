@@ -14,6 +14,22 @@ class PermissionTableSeeder extends Seeder
             'Product' => ['product-list', 'product-create', 'product-edit', 'product-delete'],
             'User' => ['user-list', 'user-create', 'user-edit', 'user-delete'],
             'Member' => ['member-list', 'member-create', 'member-edit', 'member-delete'],
+
+            // Savings Module Permissions
+            'Saving' => [
+                'saving-list',     // index
+                'saving-create',   // create/store
+                'saving-edit',     // edit/update
+                'saving-delete',   // destroy
+            ],
+
+            // Loan Module Permissions
+            'Loan' => [
+                'loan-list',       // index
+                'loan-create',     // create/store
+                'loan-edit',       // edit/update
+                'loan-delete',     // destroy
+            ],
         ];
 
         foreach ($permissions as $group => $perms) {

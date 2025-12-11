@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void
+    {
+        Schema::create('loans', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('member_id');
+            $table->decimal('loan_amount', 12, 2);
+            $table->decimal('interest_rate', 5, 2)->default(0);
+            $table->integer('installment_count');
+            $table->enum('installment_type', ['daily', 'weekly', 'monthly']);
+            $table->date('disbursement_date')->nullable();
+            $table->enum('status', ['Pending', 'Approved', 'Active', 'Completed', 'Overdue'])->default('Pending');
+            $table->text('remarks')->nullable();
+            $table->timestamps();
+            $table->foreign('member_id')->references('id')->on('members')->onDelete('cascade');
+        });
+    }
+    public function down(): void
+    {
+        Schema::dropIfExists('loans');
+    }
+};

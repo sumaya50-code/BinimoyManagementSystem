@@ -1,16 +1,24 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Loan extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'member_id',
+        'loan_amount',
+        'interest_rate',
+        'installment_count',
+        'installment_type',
+        'disbursement_date',
+        'status',
+        'remarks'
+    ];
 
-    protected $fillable = ['member_id', 'amount', 'loan_date'];
-
-    public function member() {
+    public function member()
+    {
         return $this->belongsTo(Member::class);
     }
 }
