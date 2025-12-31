@@ -1,123 +1,145 @@
-@extends('admin.index')
+@extends('admin.partials.index')
 
 @section('content')
-    <div class="mb-6 flex items-center justify-between">
-        <!-- Breadcrumb -->
-        <nav class="flex items-center space-x-2 text-sm">
-            <a href="{{ route('members.index') }}" class="flex items-center text-primary-500 hover:text-primary-600 transition">
-                <iconify-icon icon="heroicons-outline:home" class="mr-1"></iconify-icon>
-                Members
-            </a>
-            <iconify-icon icon="heroicons-outline:chevron-right" class="text-slate-400"></iconify-icon>
-            <span class="text-slate-600 dark:text-slate-300">Create Member</span>
-        </nav>
 
-        <!-- Back Button -->
-        <a href="{{ route('members.index') }}" class="btn btn-secondary px-4 py-2 rounded-lg font-medium flex items-center">
-            <iconify-icon icon="heroicons-outline:arrow-left" class="mr-2"></iconify-icon>
-            Back
-        </a>
-    </div>
-
-    <div class="grid grid-cols-1 gap-6">
-        <!-- Form -->
-        <div>
-            <div class="bg-white dark:bg-slate-800 rounded-lg shadow">
-                <form action="{{ route('members.store') }}" method="POST" class="p-6 space-y-6">
-                    @csrf
-
-                    <!-- Name -->
-                    <div>
-                        <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                            Name <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" name="name" value="{{ old('name') }}"
-                            class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg
-                                   focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
-                            placeholder="Member Name" required>
-                        @error('name')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Address -->
-                    <div>
-                        <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                            Address <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" name="address" value="{{ old('address') }}"
-                            class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg
-                                   focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
-                            placeholder="Enter address" required>
-                        @error('address')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- NID -->
-                    <div>
-                        <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                            NID <span class="text-red-500">*</span>
-                        </label>
-                        <input type="number" name="nid" value="{{ old('nid') }}"
-                            class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg
-                                   focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
-                            placeholder="National ID" required>
-                        @error('nid')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Phone -->
-                    <div>
-                        <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                            Phone <span class="text-red-500">*</span>
-                        </label>
-                        <input type="number" name="phone" value="{{ old('phone') }}"
-                            class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg
-                                   focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
-                            placeholder="Phone number" required>
-                        @error('phone')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Nominee Name -->
-                    <div>
-                        <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                            Nominee Name
-                        </label>
-                        <input type="text" name="nominee_name" value="{{ old('nominee_name') }}"
-                            class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg
-                                   focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
-                            placeholder="Nominee name">
-                    </div>
-
-                    <!-- Nominee Relation -->
-                    <div>
-                        <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                            Nominee Relation
-                        </label>
-                        <input type="text" name="nominee_relation" value="{{ old('nominee_relation') }}"
-                            class="form-control w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg
-                                   focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
-                            placeholder="Relation">
-                    </div>
-
-                    <!-- Buttons -->
-                    <div class="flex items-center gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
-                        <button type="submit" class="btn btn-primary px-6 py-2 rounded-lg font-medium flex items-center">
-                            <iconify-icon icon="heroicons-outline:check" class="mr-2"></iconify-icon>
-                            Save
-                        </button>
-                        <a href="{{ route('members.index') }}" class="btn btn-secondary px-6 py-2 rounded-lg font-medium flex items-center">
-                            <iconify-icon icon="heroicons-outline:x" class="mr-2"></iconify-icon>
-                            Cancel
-                        </a>
-                    </div>
-
-                </form>
-            </div>
+    <!-- Breadcrumb -->
+    <div class="sm:p-6 mb-6">
+        <div class="flex items-center justify-between">
+            <nav class="flex items-center text-sm text-slate-600 dark:text-slate-300 space-x-2">
+                <a href="{{ route('members.index') }}" class="flex items-center text-primary-500">
+                    <iconify-icon icon="heroicons-outline:home" class="mr-1 w-4 h-4"></iconify-icon>
+                    Members
+                </a>
+                <iconify-icon icon="heroicons-outline:chevron-right" class="text-slate-400 w-4 h-4"></iconify-icon>
+                <span>Add Member</span>
+            </nav>
         </div>
     </div>
+
+    <!-- Card -->
+    <div class="card shadow-md rounded-xl p-6">
+        <form action="{{ route('members.store') }}" method="POST" class="space-y-4">
+            @csrf
+
+            <!-- Basic Info -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="font-medium">Full Name <span class="text-red-500">*</span></label>
+                    <input type="text" name="name" placeholder="Enter full name"
+                           class="w-full border px-3 py-2 rounded" required>
+                </div>
+
+                <div>
+                    <label class="font-medium">Guardian Name</label>
+                    <input type="text" name="guardian_name" placeholder="Enter guardian name"
+                           class="w-full border px-3 py-2 rounded">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="font-medium">NID <span class="text-red-500">*</span></label>
+                    <input type="text" name="nid" placeholder="National ID"
+                           class="w-full border px-3 py-2 rounded" required>
+                </div>
+
+                <div>
+                    <label class="font-medium">Phone <span class="text-red-500">*</span></label>
+                    <input type="text" name="phone" placeholder="Phone number"
+                           class="w-full border px-3 py-2 rounded" required>
+                </div>
+            </div>
+
+            <div>
+                <label class="font-medium">Email</label>
+                <input type="email" name="email" placeholder="Email address"
+                       class="w-full border px-3 py-2 rounded">
+            </div>
+
+            <!-- Address -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="font-medium">Present Address <span class="text-red-500">*</span></label>
+                    <textarea name="present_address" rows="3"
+                              class="w-full border px-3 py-2 rounded"
+                              placeholder="Present address" required></textarea>
+                </div>
+
+                <div>
+                    <label class="font-medium">Permanent Address</label>
+                    <textarea name="permanent_address" rows="3"
+                              class="w-full border px-3 py-2 rounded"
+                              placeholder="Permanent address"></textarea>
+                </div>
+            </div>
+
+            <!-- Nominee -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="font-medium">Nominee Name</label>
+                    <input type="text" name="nominee_name" placeholder="Nominee name"
+                           class="w-full border px-3 py-2 rounded">
+                </div>
+
+                <div>
+                    <label class="font-medium">Nominee Relation</label>
+                    <input type="text" name="nominee_relation" placeholder="Relation"
+                           class="w-full border px-3 py-2 rounded">
+                </div>
+            </div>
+
+            <!-- Personal Info -->
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label class="font-medium">Gender <span class="text-red-500">*</span></label>
+                    <select name="gender" class="w-full border px-3 py-2 rounded">
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="font-medium">Date of Birth <span class="text-red-500">*</span></label>
+                    <input type="date" name="dob"
+                           class="w-full border px-3 py-2 rounded">
+                </div>
+
+                <div>
+                    <label class="font-medium">Marital Status <span class="text-red-500">*</span></label>
+                    <select name="marital_status" class="w-full border px-3 py-2 rounded">
+                        <option value="">Select</option>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Divorced">Divorced</option>
+                        <option value="Widowed">Widowed</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="font-medium">Education</label>
+                    <input type="text" name="education" placeholder="Education"
+                           class="w-full border px-3 py-2 rounded">
+                </div>
+
+                <div>
+                    <label class="font-medium">Dependents</label>
+                    <input type="number" name="dependents" placeholder="Number of dependents"
+                           class="w-full border px-3 py-2 rounded">
+                </div>
+            </div>
+
+            <!-- Status -->
+            <div>
+
+            <!-- Action -->
+            <button class="bg-primary-600 text-white px-4 py-2 rounded">
+                Add Member
+            </button>
+        </form>
+    </div>
+
 @endsection

@@ -20,6 +20,10 @@ class DatabaseSeeder extends Seeder
         $this->call(RolePermissionSeeder::class);
         $this->call(AdminPermissionSeeder::class);
 
+        // Seed initial company fund
+        $this->call(CompanyFundSeeder::class);
+
+        // Seed default chart of accounts for ledger
+        $this->call(ChartOfAccountsSeeder::class);
     }
- 
 }

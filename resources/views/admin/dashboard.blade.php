@@ -1,4 +1,4 @@
-@extends('admin.index')
+@extends('admin.partials.index')
 
 @section('content')
     <div class="flex justify-between flex-wrap items-center mb-6">

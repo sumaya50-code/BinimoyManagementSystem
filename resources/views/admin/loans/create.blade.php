@@ -1,4 +1,4 @@
-@extends('admin.index')
+@extends('admin.partials.index')
 
 @section('content')
     <div class="sm:p-6 mb-6">
@@ -15,15 +15,20 @@
     </div>
 
     <div class="card shadow-md rounded-xl p-6">
-        <form action="{{ route('loans.store') }}" method="POST" class="space-y-4">
+        <form id="loanCreateForm"
+            action="{{ isset($proposal) && $proposal ? route('loans.disburse', $proposal->id) : route('loans.store') }}"
+            method="POST" class="space-y-4">
             @csrf
 
             <div>
                 <label class="font-medium">Member</label>
-                <select name="member_id" class="w-full border px-3 py-2 rounded">
-                    <option>Select Member</option>
+                <select name="member_id" class="w-full border px-3 py-2 rounded" required>
+                    <option value="">Select Member</option>
                     @foreach ($members as $member)
-                        <option value="{{ $member->id }}">{{ $member->name }}</option>
+                        <option value="{{ $member->id }}"
+                            {{ isset($proposal) && $proposal && $proposal->member_id == $member->id ? 'selected' : '' }}>
+                            {{ $member->name }}
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -31,18 +36,22 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="font-medium">Loan Amount</label>
-                    <input type="number" name="loan_amount" class="w-full border px-3 py-2 rounded">
+                    <input type="number" name="loan_amount"
+                        value="{{ isset($proposal) && $proposal ? $proposal->proposed_amount : '' }}"
+                        class="w-full border px-3 py-2 rounded" required min="1" step="0.01">
                 </div>
                 <div>
                     <label class="font-medium">Interest Rate (%)</label>
-                    <input type="number" name="interest_rate" class="w-full border px-3 py-2 rounded">
+                    <input type="number" name="interest_rate" class="w-full border px-3 py-2 rounded" required
+                        step="0.01" min="0">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="font-medium">Installment Count</label>
-                    <input type="number" name="installment_count" class="w-full border px-3 py-2 rounded">
+                    <input type="number" name="installment_count" class="w-full border px-3 py-2 rounded" required
+                        min="1">
                 </div>
 
                 <div>
@@ -69,4 +78,17 @@
             <button class="bg-primary-600 text-white px-4 py-2 rounded">Save</button>
         </form>
     </div>
+
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('loanCreateForm').addEventListener('submit', function(e) {
+                    if (!this.checkValidity()) {
+                        e.preventDefault();
+                        this.reportValidity();
+                    }
+                });
+            });
+        </script>
+    @endpush
 @endsection

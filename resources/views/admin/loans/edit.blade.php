@@ -15,7 +15,7 @@
     </div>
 
     <div class="card shadow-md rounded-xl p-6">
-        <form action="{{ route('loans.update', $loan->id) }}" method="POST" class="space-y-4">
+        <form id="loanEditForm" action="{{ route('loans.update', $loan->id) }}" method="POST" class="space-y-4">
             @csrf
             @method('PUT')
 
@@ -72,4 +72,18 @@
             <button class="bg-primary-600 text-white px-4 py-2 rounded">Update</button>
         </form>
     </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        document.getElementById('loanEditForm').addEventListener('submit', function(e){
+            if (!this.checkValidity()) {
+                e.preventDefault();
+                this.reportValidity();
+            }
+        });
+    });
+</script>
+@endpush
+
 @endsection

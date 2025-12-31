@@ -1,4 +1,4 @@
-@extends('admin.index')
+@extends('admin.partials.index')
 
 @section('content')
     <div class="container mt-4">
@@ -19,7 +19,7 @@
             </a>
         </div>
 
-        
+
 
         @if ($errors->any())
             <div class="alert alert-danger">

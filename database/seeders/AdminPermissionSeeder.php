@@ -22,7 +22,27 @@ class AdminPermissionSeeder extends Seeder
         $role = Role::firstOrCreate(['name' => 'Admin']);
 
         // Get all permissions (or create them if not exist)
-        $permissions = ['role-list','role-create','role-edit','role-delete'];
+        $permissions = [
+            // Roles
+            'role-list', 'role-create', 'role-edit', 'role-delete',
+            // Users
+            'user-list', 'user-create', 'user-edit', 'user-delete',
+            // Members
+            'member-list', 'member-create', 'member-edit', 'member-delete',
+            // Savings
+            'saving-list', 'saving-create', 'saving-edit', 'saving-delete',
+            // Loans
+            'loan-list', 'loan-create', 'loan-edit', 'loan-delete',
+            'loan-installments', 'loan-collections',
+            // Partners
+            'partner-list', 'partner-create', 'partner-edit', 'partner-delete',
+            // Cash & Company Fund
+            'cash-asset-list', 'companyfund-view',
+            // Reports / Notifications / Audit
+            'report-view', 'notification-view', 'audit-view',
+            // Other (used in controllers)
+            'investment-list',
+        ];
         foreach ($permissions as $perm) {
             Permission::firstOrCreate(['name' => $perm]);
         }

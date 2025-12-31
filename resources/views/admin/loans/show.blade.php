@@ -1,4 +1,4 @@
-@extends('admin.index')
+@extends('admin.partials.index')
 
 @section('content')
 <div class="sm:p-6 mb-6">

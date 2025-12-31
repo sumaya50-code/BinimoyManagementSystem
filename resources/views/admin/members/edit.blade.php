@@ -1,86 +1,155 @@
-@extends('admin.index')
+@extends('admin.partials.index')
 
 @section('content')
-<div class="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
-    <!-- Breadcrumb -->
-    <div class="mb-6 flex items-center justify-between">
-        <nav class="flex items-center space-x-2 text-sm">
-            <a href="{{ route('members.index') }}" class="flex items-center text-primary-500 hover:text-primary-600 transition">
-                <iconify-icon icon="heroicons-outline:home" class="mr-1"></iconify-icon>
-                Members
-            </a>
-            <iconify-icon icon="heroicons-outline:chevron-right" class="text-slate-400"></iconify-icon>
-            <span class="text-slate-600 dark:text-slate-300">Edit Member</span>
-        </nav>
 
-        <!-- Back Button -->
-        <a href="{{ route('members.index') }}" class="btn btn-secondary">
-            <iconify-icon icon="heroicons-outline:arrow-left" class="mr-1"></iconify-icon>
-            Back
-        </a>
+    <!-- Breadcrumb -->
+    <div class="sm:p-6 mb-6">
+        <div class="flex items-center justify-between">
+            <nav class="flex items-center text-sm text-slate-600 dark:text-slate-300 space-x-2">
+                <a href="{{ route('members.index') }}" class="flex items-center text-primary-500">
+                    <iconify-icon icon="heroicons-outline:home" class="mr-1 w-4 h-4"></iconify-icon>
+                    Members
+                </a>
+                <iconify-icon icon="heroicons-outline:chevron-right" class="text-slate-400 w-4 h-4"></iconify-icon>
+                <span>Edit Member</span>
+            </nav>
+        </div>
     </div>
 
-    <!-- Main Card -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-8">
-        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6 sm:mb-8">Edit Member</h1>
-
-        <form action="{{ route('members.update', $member->id) }}" method="POST" class="space-y-6">
+    <!-- Card -->
+    <div class="card shadow-md rounded-xl p-6">
+        <form action="{{ route('members.update', $member->id) }}" method="POST" class="space-y-4">
             @csrf
             @method('PUT')
 
-            <!-- Name & NID Row -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <!-- Basic Info -->
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Name</label>
-                    <input type="text" name="name" class="w-full px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition text-sm sm:text-base" value="{{ $member->name }}" required>
+                    <label class="font-medium">Full Name</label>
+                    <input type="text" name="name" value="{{ old('name', $member->name) }}"
+                           class="w-full border px-3 py-2 rounded" required>
                 </div>
+
                 <div>
-                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">NID</label>
-                    <input type="text" name="nid" class="w-full px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition text-sm sm:text-base" value="{{ $member->nid }}" required>
+                    <label class="font-medium">Guardian Name</label>
+                    <input type="text" name="guardian_name"
+                           value="{{ old('guardian_name', $member->guardian_name) }}"
+                           class="w-full border px-3 py-2 rounded">
                 </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="font-medium">NID</label>
+                    <input type="text" name="nid" value="{{ old('nid', $member->nid) }}"
+                           class="w-full border px-3 py-2 rounded" required>
+                </div>
+
+                <div>
+                    <label class="font-medium">Phone</label>
+                    <input type="text" name="phone" value="{{ old('phone', $member->phone) }}"
+                           class="w-full border px-3 py-2 rounded" required>
+                </div>
+            </div>
+
+            <div>
+                <label class="font-medium">Email</label>
+                <input type="email" name="email" value="{{ old('email', $member->email) }}"
+                       class="w-full border px-3 py-2 rounded">
             </div>
 
             <!-- Address -->
-            <div>
-                <label class="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Address</label>
-                <textarea name="address" rows="3" class="w-full px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition text-sm sm:text-base" required>{{ $member->address }}</textarea>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="font-medium">Present Address</label>
+                    <textarea name="present_address" rows="3"
+                              class="w-full border px-3 py-2 rounded" required>{{ old('present_address', $member->present_address) }}</textarea>
+                </div>
+
+                <div>
+                    <label class="font-medium">Permanent Address</label>
+                    <textarea name="permanent_address" rows="3"
+                              class="w-full border px-3 py-2 rounded">{{ old('permanent_address', $member->permanent_address) }}</textarea>
+                </div>
             </div>
 
-            <!-- Phone & Status Row -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <!-- Nominee -->
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Phone</label>
-                    <input type="text" name="phone" class="w-full px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition text-sm sm:text-base" value="{{ $member->phone }}" required>
+                    <label class="font-medium">Nominee Name</label>
+                    <input type="text" name="nominee_name"
+                           value="{{ old('nominee_name', $member->nominee_name) }}"
+                           class="w-full border px-3 py-2 rounded">
                 </div>
+
                 <div>
-                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Status</label>
-                    <select name="status" class="w-full px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition text-sm sm:text-base" required>
-                        <option value="active" {{ $member->status == 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="inactive" {{ $member->status == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                    <label class="font-medium">Nominee Relation</label>
+                    <input type="text" name="nominee_relation"
+                           value="{{ old('nominee_relation', $member->nominee_relation) }}"
+                           class="w-full border px-3 py-2 rounded">
+                </div>
+            </div>
+
+            <!-- Personal Info -->
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label class="font-medium">Gender</label>
+                    <select name="gender" class="w-full border px-3 py-2 rounded">
+                        <option value="">Select Gender</option>
+                        <option value="Male" {{ $member->gender=='Male'?'selected':'' }}>Male</option>
+                        <option value="Female" {{ $member->gender=='Female'?'selected':'' }}>Female</option>
+                        <option value="Other" {{ $member->gender=='Other'?'selected':'' }}>Other</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="font-medium">Date of Birth</label>
+                    <input type="date" name="dob" value="{{ old('dob', $member->dob) }}"
+                           class="w-full border px-3 py-2 rounded">
+                </div>
+
+                <div>
+                    <label class="font-medium">Marital Status</label>
+                    <select name="marital_status" class="w-full border px-3 py-2 rounded">
+                        <option value="">Select</option>
+                        <option value="Single" {{ $member->marital_status=='Single'?'selected':'' }}>Single</option>
+                        <option value="Married" {{ $member->marital_status=='Married'?'selected':'' }}>Married</option>
+                        <option value="Divorced" {{ $member->marital_status=='Divorced'?'selected':'' }}>Divorced</option>
+                        <option value="Widowed" {{ $member->marital_status=='Widowed'?'selected':'' }}>Widowed</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Nominee Info Row -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Nominee Name</label>
-                    <input type="text" name="nominee_name" class="w-full px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition text-sm sm:text-base" value="{{ $member->nominee_name }}">
+                    <label class="font-medium">Education</label>
+                    <input type="text" name="education"
+                           value="{{ old('education', $member->education) }}"
+                           class="w-full border px-3 py-2 rounded">
                 </div>
+
                 <div>
-                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Nominee Relation</label>
-                    <input type="text" name="nominee_relation" class="w-full px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition text-sm sm:text-base" value="{{ $member->nominee_relation }}">
+                    <label class="font-medium">Dependents</label>
+                    <input type="number" name="dependents"
+                           value="{{ old('dependents', $member->dependents) }}"
+                           class="w-full border px-3 py-2 rounded">
                 </div>
             </div>
 
-            <!-- Submit Button -->
-            <div class=" justify-end flex mt-4">
-                <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition shadow-md text-sm sm:text-base">
-                    <iconify-icon icon="heroicons-outline:check" class="mr-2"></iconify-icon>
-                    Update Member
-                </button>
+            <!-- Status -->
+            <div>
+                <label class="font-medium">Status</label>
+                <select name="status" class="w-full border px-3 py-2 rounded">
+                    <option value="Active" {{ $member->status=='Active'?'selected':'' }}>Active</option>
+                    <option value="Inactive" {{ $member->status=='Inactive'?'selected':'' }}>Inactive</option>
+                </select>
             </div>
+
+            <!-- Action -->
+            <button class="bg-primary-600 text-white px-4 py-2 rounded">
+                Update Member
+            </button>
         </form>
     </div>
-</div>
+
 @endsection

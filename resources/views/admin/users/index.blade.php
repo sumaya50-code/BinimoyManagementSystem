@@ -1,4 +1,4 @@
-@extends('admin.index')
+@extends('admin.partials.index')
 
 @section('content')
     <!-- Page Header / Breadcrumb -->
@@ -30,10 +30,10 @@
             <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700" id="userTable">
                 <thead class="bg-slate-100 dark:bg-slate-800">
                     <tr>
-                        <th class="px-4 py-2 text-left text-sm font-semibold">#</th>
-                        <th class="px-4 py-2 text-left text-sm font-semibold">Name</th>
-                        <th class="px-4 py-2 text-left text-sm font-semibold">Email</th>
-                        <th class="px-4 py-2 text-left text-sm font-semibold">Roles</th>
+                        <th class=" text-left text-sm font-semibold">#</th>
+                        <th class=" text-left text-sm font-semibold">Name</th>
+                        <th class=" text-left text-sm font-semibold">Email</th>
+                        <th class=" text-left text-sm font-semibold">Roles</th>
                         <th class="px-4 py-2 text-center text-sm font-semibold">Actions</th>
                     </tr>
                 </thead>

@@ -3,171 +3,292 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\{SavingsAccount, SavingsTransaction, SavingsWithdrawalRequest, CompanyFund, Member, CashAsset, CashTransaction};
+use Barryvdh\DomPDF\Facade\Pdf;
 use Yajra\DataTables\DataTables;
-use App\Models\Saving;
-use App\Models\User;
 
 class SavingsController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:saving-list|saving-create|saving-edit|saving-delete', ['only' => ['index', 'store']]);
-        $this->middleware('permission:saving-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:saving-edit', ['only' => ['edit', 'update', 'toggleStatus']]);
+        // Viewing dashboard and statements
+        $this->middleware('permission:saving-list|saving-view', ['only' => ['index', 'show', 'statement']]);
+
+
+        $this->middleware('permission:saving-create', ['only' => ['store']]);
+
+        // Approve deposit
+        $this->middleware('permission:saving-approve', ['only' => ['approveDeposit']]);
+
+        // Post monthly interest
+        $this->middleware('permission:saving-post-interest', ['only' => ['postInterest']]);
+
+        // Withdrawal request
+        $this->middleware('permission:saving-withdraw', ['only' => ['withdrawalRequest']]);
+
+        // Approve withdrawal
+        $this->middleware('permission:saving-approve-withdraw', ['only' => ['approveWithdrawal']]);
+
+        // Generate voucher
+        $this->middleware('permission:saving-voucher', ['only' => ['voucher']]);
+
+        // Edit or delete transactions (optional)
+        $this->middleware('permission:saving-edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:saving-delete', ['only' => ['destroy']]);
     }
 
-    // List all transactions page
+    // Dashboard
     public function index()
     {
-        return view('admin.savings.index');
+        $accounts = SavingsAccount::with('member')->get();
+        $transactions = SavingsTransaction::with('account.member')->get();
+        return view('admin.savings.index', compact('accounts', 'transactions'));
     }
 
-    // AJAX DataTables for transactions
-    public function getSavingsData(Request $request)
+    // DataTables for Pending Deposits
+    public function getPendingDepositsData()
     {
-        $transactions = Saving::with('member')->latest();
+        $query = SavingsTransaction::with('account.member')
+            ->where('type', 'deposit')
+            ->where('status', 'pending');
 
-        return DataTables::of($transactions)
+        // Handle search
+        if (request()->has('search') && !empty(request('search')['value'])) {
+            $search = request('search')['value'];
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('account.member', function ($subQ) use ($search) {
+                    $subQ->where('name', 'like', '%' . $search . '%');
+                })
+                    ->orWhere('amount', 'like', '%' . $search . '%')
+                    ->orWhereRaw("DATE_FORMAT(transaction_date, '%d %b, %Y') LIKE ?", ['%' . $search . '%']);
+            });
+        }
+
+        return DataTables::of($query)
             ->addIndexColumn()
-            ->addColumn('member', fn($row) => $row->member->name)
-            ->addColumn('type', fn($row) => ucfirst($row->type))
-            ->addColumn('amount', fn($row) => $row->amount)
-            ->addColumn('balance', fn($row) => $row->balance)
-            ->addColumn('status', fn($row) => ucfirst($row->status))
-            ->addColumn('interest', fn($row) => '<a href="'.route('savings.interest', $row->member_id).'" class="btn btn-info btn-sm text-white px-3 py-1 rounded">View</a>')
-            ->addColumn('actions', function($row) {
-                $edit = '<a href="'.route('savings.edit', $row->id).'" class="text-yellow-600 mr-2">
-                            <iconify-icon icon="heroicons:pencil-square" width="22"></iconify-icon>
-                         </a>';
-
-                $approve = ($row->type == 'withdraw' && $row->status == 'pending')
-                            ? '<a href="'.route('savings.approve', $row->id).'" class="text-green-600 mr-2">
-                                <iconify-icon icon="heroicons:check" width="22"></iconify-icon>
-                               </a>'
-                            : '';
-
-                $delete = '<form action="'.route('savings.destroy', $row->id).'" method="POST" style="display:inline;" onsubmit="return confirm(\'Are you sure?\');">
-                                '.csrf_field().method_field('DELETE').'
-                                <button type="submit" class="text-red-600">
-                                    <iconify-icon icon="heroicons:trash" width="22"></iconify-icon>
-                                </button>
-                           </form>';
-
-                return $edit.$approve.$delete;
+            ->addColumn('member_name', function ($transaction) {
+                /** @var \App\Models\SavingsTransaction $transaction */
+                return $transaction->account->member->name;
             })
-            ->rawColumns(['interest', 'actions'])
+            ->addColumn('amount_formatted', function ($transaction) {
+                /** @var \App\Models\SavingsTransaction $transaction */
+                return '৳ ' . number_format($transaction->amount, 2);
+            })
+            ->addColumn('transaction_date_formatted', function ($transaction) {
+                /** @var \App\Models\SavingsTransaction $transaction */
+                return \Carbon\Carbon::parse($transaction->transaction_date)->format('d M, Y');
+            })
+            ->addColumn('action', function ($transaction) {
+                /** @var \App\Models\SavingsTransaction $transaction */
+                return '<a href="' . route('savings.approveDeposit', $transaction->id) . '" class="btn btn-success btn-sm px-3">Approve</a>';
+            })
+            ->rawColumns(['action'])
             ->make(true);
     }
 
-    // Show create form
-    public function create()
+    // Withdrawal Requests Page
+    public function withdrawals()
     {
-        $members = User::all();
-        return view('admin.savings.create', compact('members'));
+        $requests = SavingsWithdrawalRequest::with('member')->get();
+        return view('admin.savings.withdrawals', compact('requests'));
     }
 
-    // Store deposit or withdraw transaction
+    // Deposit Entry (Pending)
     public function store(Request $request)
     {
         $request->validate([
             'member_id' => 'required',
-            'type'      => 'required',
-            'amount'    => 'required|numeric|min:1',
+            'amount' => 'required|numeric|min:1'
         ]);
 
-        $last = Saving::where('member_id', $request->member_id)->latest()->first();
-        $prevBalance = $last->balance ?? 0;
+        $account = SavingsAccount::firstOrCreate(
+            ['member_id' => $request->member_id],
+            ['balance' => 0, 'interest_rate' => 5]
+        );
 
-        if ($request->type == 'deposit') {
-            $newBalance = $prevBalance + $request->amount;
-            $status = 'approved';
-        } else {
-            $newBalance = $prevBalance - $request->amount;
-            $status = 'pending';
+        // Ensure account number exists for display and reference
+        if (empty($account->account_no)) {
+            $account->update(['account_no' => 'SA' . str_pad($account->id, 6, '0', STR_PAD_LEFT)]);
         }
 
-        Saving::create([
-            'member_id' => $request->member_id,
-            'type' => $request->type,
+        SavingsTransaction::create([
+            'savings_account_id' => $account->id,
+            'type' => 'deposit',
             'amount' => $request->amount,
-            'balance' => $newBalance,
-            'status' => $status,
-            'interest_rate' => 5,
+            'remarks' => 'Savings Deposit',
+            'status' => 'pending',
+            'transaction_date' => now()
         ]);
 
-        return redirect()->route('savings.index')->with('success', 'Transaction saved successfully');
+        return back()->with('success', 'Deposit submitted for approval');
     }
 
-    // Show edit form
-    public function edit($id)
+    // Approve Deposit
+    public function approveDeposit($id)
     {
-        $transaction = Saving::findOrFail($id);
-        $members = User::all();
-        return view('admin.savings.edit', compact('transaction', 'members'));
+        $txn = SavingsTransaction::findOrFail($id);
+        if ($txn->type != 'deposit' || $txn->status != 'pending') {
+            return back()->with('error', 'Invalid transaction');
+        }
+        $txn->update(['status' => 'approved']);
+        $txn->account->increment('balance', $txn->amount);
+
+        // Update company fund balance
+        $companyFund = CompanyFund::firstOrCreate([], ['balance' => 0]);
+        $companyFund->increment('balance', $txn->amount);
+
+        // Create cash transaction for inflow
+        $cashAsset = CashAsset::first();
+        if ($cashAsset) {
+            CashTransaction::create([
+                'cash_asset_id' => $cashAsset->id,
+                'type' => 'inflow',
+                'amount' => $txn->amount,
+                'reference_type' => 'savings_deposit',
+                'reference_id' => $txn->id,
+                'remarks' => 'Savings deposit approved'
+            ]);
+            $cashAsset->increment('balance', $txn->amount);
+        }
+
+        return back()->with('success', 'Deposit approved and balance updated');
     }
 
-    // Update transaction
-    public function update(Request $request, $id)
+    // Post Interest
+    public function postInterest()
+    {
+        $accounts = SavingsAccount::all();
+        foreach ($accounts as $account) {
+            $interest = ($account->balance * $account->interest_rate) / 100 / 12;
+            if ($interest > 0) {
+                SavingsTransaction::create([
+                    'savings_account_id' => $account->id,
+                    'type' => 'deposit',
+                    'amount' => $interest,
+                    'transaction_date' => now(),
+                    'remarks' => 'Monthly Interest',
+                    'status' => 'approved'
+                ]);
+                $account->increment('balance', $interest);
+            }
+        }
+        return back()->with('success', 'Interest posted');
+    }
+
+    // Withdrawal Request
+    public function withdrawalRequest(Request $request)
     {
         $request->validate([
-            'type'   => 'required',
-            'amount' => 'required|numeric|min:1',
+            'member_id' => 'required',
+            'amount' => 'required|numeric|min:1'
         ]);
 
-        $transaction = Saving::findOrFail($id);
-        $transaction->update($request->all());
-
-        return redirect()->route('savings.index')->with('success', 'Updated successfully');
-    }
-
-    // Delete transaction
-    public function destroy($id)
-    {
-        Saving::destroy($id);
-        return redirect()->route('savings.index')->with('success', 'Deleted successfully');
-    }
-
-    // Approve withdraw
-    public function approve($id)
-    {
-        $transaction = Saving::findOrFail($id);
-
-        if ($transaction->type == 'withdraw') {
-            $last = Saving::where('member_id', $transaction->member_id)
-                          ->where('id', '<', $transaction->id)
-                          ->latest()->first();
-
-            $prevBalance = $last->balance ?? 0;
-
-            $transaction->update([
-                'balance' => $prevBalance - $transaction->amount,
-                'status' => 'approved',
-            ]);
+        // Ensure requested amount does not exceed savings balance
+        $account = SavingsAccount::where('member_id', $request->member_id)->first();
+        if (!$account || $request->amount > $account->balance) {
+            return back()->with('error', 'Insufficient savings balance for this withdrawal request');
         }
 
-        return back()->with('success', 'Withdraw request approved');
+        SavingsWithdrawalRequest::create([
+            'member_id' => $request->member_id,
+            'amount' => $request->amount,
+            'status' => 'pending'
+        ]);
+
+        return back()->with('success', 'Withdrawal request submitted');
     }
 
-    // Interest Calculation page
-    public function calculateInterest($member_id)
+    // Approve Withdrawal
+    public function approveWithdrawal($id)
     {
-        $transactions = Saving::where('member_id', $member_id)->get();
-        $lastBalance = $transactions->last()->balance ?? 0;
-        $interest = ($lastBalance * 5) / 100;
+        $withdrawal = SavingsWithdrawalRequest::findOrFail($id);
+        $account = SavingsAccount::where('member_id', $withdrawal->member_id)->first();
+        $companyFund = CompanyFund::firstOrCreate([], ['balance' => 0]);
 
-        return view('admin.savings.interest', compact('transactions', 'interest', 'lastBalance'));
+        if ($withdrawal->amount > $account->balance) {
+            return back()->with('error', 'Insufficient balance');
+        }
+
+        if ($companyFund->balance < $withdrawal->amount) {
+            return back()->with('error', 'Company fund has insufficient balance to process this withdrawal');
+        }
+
+        $withdrawal->update([
+            'status' => 'approved',
+            'approved_by' => auth()->id(),
+            'approved_at' => now()
+        ]);
+
+        $account->decrement('balance', $withdrawal->amount);
+        $companyFund->decrement('balance', $withdrawal->amount);
+
+        $txn = SavingsTransaction::create([
+            'savings_account_id' => $account->id,
+            'type' => 'withdrawal',
+            'amount' => $withdrawal->amount,
+            'transaction_date' => now(),
+            'remarks' => 'Savings Withdrawal',
+            'status' => 'approved'
+        ]);
+
+        // Create cash transaction for outflow
+        $cashAsset = CashAsset::first();
+        if ($cashAsset) {
+            CashTransaction::create([
+                'cash_asset_id' => $cashAsset->id,
+                'type' => 'outflow',
+                'amount' => $withdrawal->amount,
+                'reference_type' => 'savings_withdrawal',
+                'reference_id' => $txn->id,
+                'remarks' => 'Savings withdrawal approved'
+            ]);
+            $cashAsset->decrement('balance', $withdrawal->amount);
+        }
+
+        // Notify member about approved withdrawal (email + sms if available)
+        $member = $withdrawal->member;
+        $channels = ['email', 'sms'];
+        $toEmail = $member->email;
+        $toPhone = $member->phone;
+
+        \App\Services\NotificationService::send('withdrawal_approved', [$toEmail, $toPhone], $channels, 'Your withdrawal of ' . number_format($withdrawal->amount, 2) . ' has been approved.', ['withdrawal_id' => $withdrawal->id]);
+
+        return back()->with('success', 'Withdrawal approved');
     }
 
-    // AJAX Data for interest calculation
-    public function getInterestData(Request $request, $member_id)
+    // Statement
+    public function statement($memberId)
     {
-        $transactions = Saving::where('member_id', $member_id)->latest();
-
-        return DataTables::of($transactions)
-            ->addIndexColumn()
-            ->editColumn('type', fn($row) => ucfirst($row->type))
-            ->editColumn('status', fn($row) => ucfirst($row->status))
-            ->make(true);
+        $account = SavingsAccount::where('member_id', $memberId)->with('transactions')->firstOrFail();
+        return view('admin.savings.statement', compact('account'));
     }
+
+    // Voucher
+    public function voucher($id)
+    {
+        $withdrawal = SavingsWithdrawalRequest::with('member', 'approver')->findOrFail($id);
+        $pdf = Pdf::loadView('admin.savings.voucher', compact('withdrawal'));
+        return $pdf->download('withdrawal-voucher.pdf');
+    }
+
+    // Savings Accounts Summary
+    public function summary()
+    {
+        $accounts = SavingsAccount::with('member')->get();
+        $totalAccounts = $accounts->count();
+        $totalBalance = $accounts->sum('balance');
+        $totalDeposits = SavingsTransaction::where('type', 'deposit')->where('status', 'approved')->sum('amount');
+        $totalWithdrawals = SavingsTransaction::where('type', 'withdrawal')->where('status', 'approved')->sum('amount');
+
+        return view('admin.savings.summary', compact('accounts', 'totalAccounts', 'totalBalance', 'totalDeposits', 'totalWithdrawals'));
+    }
+
+    // Resource Methods
+    public function show($id)
+    {
+        return $this->statement($id);
+    }
+    public function edit($id) {}
+    public function update(Request $request, $id) {}
+    public function destroy($id) {}
 }

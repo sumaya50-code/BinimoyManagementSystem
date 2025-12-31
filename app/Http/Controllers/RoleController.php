@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\View\View;
@@ -19,10 +20,48 @@ class RoleController extends Controller
         $this->middleware('permission:role-delete', ['only' => ['destroy']]);
     }
 
+    /**
+     * Display the role listing page (DataTables will load via AJAX)
+     */
     public function index(): View
     {
-        $roles = Role::latest()->get();
-        return view('admin.roles.index', compact('roles'));
+        return view('admin.roles.index'); // Blade file will handle DataTables AJAX
+    }
+
+    /**
+     * Return JSON for DataTables AJAX
+     */
+    public function getData(Request $request)
+    {
+        if ($request->ajax()) {
+            $roles = Role::with('permissions')->latest();
+
+            return DataTables::of($roles)
+                ->addIndexColumn() // Adds DT_RowIndex
+                ->addColumn('permissions', function ($role) {
+                    $count = $role->permissions->count();
+                    return '<span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">' . $count . ' permissions</span>';
+                })
+                ->addColumn('actions', function ($role) {
+                    // Show action buttons based on permissions
+                    $edit = auth()->user()->can('role-edit') ?
+                        '<a href="'.route('roles.edit', $role->id).'" class="text-yellow-600 hover:text-yellow-800 mr-2">
+                            <iconify-icon icon="heroicons:pencil-square" width="22"></iconify-icon>
+                        </a>' : '';
+
+                    $delete = auth()->user()->can('role-delete') ?
+                        '<form action="'.route('roles.destroy', $role->id).'" method="POST" style="display:inline-block;" onsubmit="return confirm(\'Are you sure?\')">
+                            '.csrf_field().method_field('DELETE').'
+                            <button class="text-red-600 hover:text-red-800">
+                                <iconify-icon icon="heroicons:trash" width="22"></iconify-icon>
+                            </button>
+                        </form>' : '';
+
+                    return '<div class="flex justify-center space-x-2">'.$edit.$delete.'</div>';
+                })
+                ->rawColumns(['permissions', 'actions']) // Allow HTML in these columns
+                ->make(true);
+        }
     }
 
     public function create()

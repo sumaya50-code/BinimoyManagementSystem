@@ -1,4 +1,4 @@
-@extends('admin.index')
+@extends('admin.partials.index')
 
 @section('content')
     <!-- Page Header / Breadcrumb -->
@@ -17,11 +17,23 @@
             </nav>
 
             <!-- Add New Loan Button -->
-            <a href="{{ route('loans.create') }}"
-                class="btn btn-secondary flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-                <iconify-icon icon="heroicons-outline:plus" class="w-4 h-4"></iconify-icon>
-                Add New Loan
-            </a>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('loans.create') }}"
+                    class="btn btn-secondary flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <iconify-icon icon="heroicons-outline:plus" class="w-4 h-4"></iconify-icon>
+                    Add New Loan
+                </a>
+
+                <!-- Status Filter -->
+                <select id="loanStatusFilter" class="border px-3 py-2 rounded text-sm">
+                    <option value="">All Statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="disbursed">Disbursed</option>
+                    <option value="closed">Closed</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
 
         </div>
     </div>
@@ -66,10 +78,20 @@
                     { data: 'interest_rate', name: 'interest_rate' },
                     { data: 'installment_type', name: 'installment_type' },
                     { data: 'status', name: 'status', orderable: false, searchable: false },
-                    { data: 'loan_details', name: 'loan_details', orderable: false, searchable: false, className: 'text-center' },
+                            { data: 'loan_details', name: 'loan_details', orderable: false, searchable: false, className: 'text-center' },
                     { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
                 ],
                 order: [[1, 'desc']]
+            });
+
+            // Status filter
+            $('#loanStatusFilter').on('change', function() {
+                let v = $(this).val();
+                if (v === '') {
+                    table.column(5).search('').draw();
+                } else {
+                    table.column(5).search(v, true, false).draw();
+                }
             });
 
             // DELETE ACTION
