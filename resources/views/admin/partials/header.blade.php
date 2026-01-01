@@ -1,6 +1,6 @@
          <div class="z-[9]" id="app_header">
              <div
-                 class="app-header z-[999] ltr:ml-[248px] rtl:mr-[248px] bg-white dark:bg-slate-800 shadow-sm dark:shadow-slate-700">
+                 class="app-header z-[999] ltr:ml-0 md:ltr:ml-[248px] rtl:mr-0 md:rtl:mr-[248px] bg-white dark:bg-slate-800 shadow-sm dark:shadow-slate-700">
                  <div class="flex justify-between items-center h-full">
                      <div class="flex items-center md:space-x-4 space-x-2 xl:space-x-0 rtl:space-x-reverse vertical-box">
                          <a href="index.html" class="mobile-logo xl:hidden inline-block">
@@ -1144,8 +1144,8 @@
         justify-center rounded-full text-white z-[45]">
                                      10</span>
                              </button>-->
-                             <!-- Mail Dropdown -->
-                             <!--<div
+                         <!-- Mail Dropdown -->
+                         <!--<div
                                  class="dropdown-menu z-10 hidden bg-white divide-y divide-slate-100 dark:divide-slate-700 shadow w-[335px]
       dark:bg-slate-800 border dark:border-slate-700 !top-[23px] rounded-md overflow-hidden lrt:origin-top-right rtl:origin-top-left">
                                  <div class="flex items-center justify-between py-4 px-4">

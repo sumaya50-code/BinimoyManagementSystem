@@ -1,4 +1,4 @@
-<div class="sidebar-wrapper group">
+<div class="sidebar-wrapper group hidden md:block">
     <div id="bodyOverlay" class="w-screen h-screen fixed top-0 bg-slate-900 bg-opacity-50 backdrop-blur-sm z-10 hidden">
     </div>
 
